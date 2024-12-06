@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 const AUTHORIZED_USERS = {
   'client1': { name: 'John Smith' },
   'bobbogle24': { name: 'Robert Bogle' }
+  'donhamilton': { name: 'Tyler Hamilton' }
 };
 
 export default function CreateAccount() {
