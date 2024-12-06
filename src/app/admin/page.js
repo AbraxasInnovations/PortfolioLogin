@@ -25,12 +25,6 @@ export default function Admin() {
 
   const handleAdminLogin = (e) => {
     e.preventDefault();
-
-    // Log the entered username and password for debugging
-    console.log('Entered Username:', adminUsername);
-    console.log('Entered Password:', adminPassword);
-
-    // Trim username and ensure case-insensitive match
     if (
       adminUsername.trim().toLowerCase() === ADMIN_CREDENTIALS.username.toLowerCase() &&
       adminPassword === ADMIN_CREDENTIALS.password
@@ -46,10 +40,10 @@ export default function Admin() {
     const allAccounts = [];
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (key !== 'currentUser') { // Skip session data
+      if (key !== 'currentUser') {
         try {
           const value = JSON.parse(localStorage.getItem(key));
-          if (value.password) { // Check if it's an account entry
+          if (value.password) {
             allAccounts.push({ username: key, ...value });
           }
         } catch (e) {
@@ -60,24 +54,40 @@ export default function Admin() {
     setAccounts(allAccounts);
   };
 
-  const updatePortfolioValue = (username, newValue) => {
+  const updateAccount = (username, field, newValue) => {
     const userData = JSON.parse(localStorage.getItem(username));
-    userData.portfolioValue = parseFloat(newValue);
+    userData[field] = newValue;
     localStorage.setItem(username, JSON.stringify(userData));
     loadAccounts(); // Refresh the list
   };
 
-  const addPosition = (username) => {
+  const updatePosition = (username, positionIndex, field, newValue) => {
     const userData = JSON.parse(localStorage.getItem(username));
-    const newPosition = {
-      name: "New Position",
-      description: "Position Description",
-      value: 0,
-      allocation: 0
-    };
-    userData.positions = [...(userData.positions || []), newPosition];
+    const positions = userData.positions || [];
+    positions[positionIndex][field] = newValue;
+    userData.positions = positions;
     localStorage.setItem(username, JSON.stringify(userData));
-    loadAccounts();
+    loadAccounts(); // Refresh the list
+  };
+
+  const deletePosition = (username, positionIndex) => {
+    const userData = JSON.parse(localStorage.getItem(username));
+    const positions = userData.positions || [];
+    positions.splice(positionIndex, 1); // Remove the position
+    userData.positions = positions;
+    localStorage.setItem(username, JSON.stringify(userData));
+    loadAccounts(); // Refresh the list
+  };
+
+  const addPendingTransferNotice = (username, positionIndex) => {
+    const userData = JSON.parse(localStorage.getItem(username));
+    const positions = userData.positions || [];
+    if (positions[positionIndex]) {
+      positions[positionIndex].pendingTransfer = true;
+    }
+    userData.positions = positions;
+    localStorage.setItem(username, JSON.stringify(userData));
+    loadAccounts(); // Refresh the list
   };
 
   if (!isLoggedIn) {
@@ -100,7 +110,6 @@ export default function Admin() {
                     value={adminUsername}
                     onChange={(e) => setAdminUsername(e.target.value)}
                     className="w-full bg-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                    placeholder="Enter admin username"
                   />
                 </div>
                 <div>
@@ -110,10 +119,9 @@ export default function Admin() {
                     value={adminPassword}
                     onChange={(e) => setAdminPassword(e.target.value)}
                     className="w-full bg-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                    placeholder="Enter admin password"
                   />
                 </div>
-                <button 
+                <button
                   type="submit"
                   className="w-full bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 rounded-lg transition-colors"
                 >
@@ -143,38 +151,113 @@ export default function Admin() {
         <div className="space-y-6">
           {accounts.map((account, index) => (
             <div key={index} className="bg-gray-800/50 p-6 rounded-lg">
-              <div className="flex justify-between items-start mb-4">
+              <div className="space-y-4">
                 <div>
-                  <h2 className="text-xl font-bold">{account.name}</h2>
-                  <p className="text-gray-400">Username: {account.username}</p>
+                  <label className="block text-sm font-medium text-gray-400">Name</label>
+                  <input
+                    type="text"
+                    value={account.name}
+                    onChange={(e) =>
+                      updateAccount(account.username, 'name', e.target.value)
+                    }
+                    className="w-full bg-gray-700 rounded px-3 py-1"
+                  />
                 </div>
-                <div className="space-x-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-400">
+                    Portfolio Value
+                  </label>
                   <input
                     type="number"
                     value={account.portfolioValue}
-                    onChange={(e) => updatePortfolioValue(account.username, e.target.value)}
-                    className="bg-gray-700 rounded px-3 py-1 w-40"
+                    onChange={(e) =>
+                      updateAccount(account.username, 'portfolioValue', e.target.value)
+                    }
+                    className="w-full bg-gray-700 rounded px-3 py-1"
                   />
-                  <button
-                    onClick={() => addPosition(account.username)}
-                    className="bg-blue-500 hover:bg-blue-400 px-4 py-1 rounded"
-                  >
-                    Add Position
-                  </button>
                 </div>
-              </div>
-              
-              <div className="space-y-3">
-                {account.positions?.map((position, posIndex) => (
-                  <div key={posIndex} className="bg-gray-700/50 p-3 rounded">
-                    <p>{position.name} - ${position.value.toLocaleString()} ({position.allocation}%)</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
+                <div>
+                  <h3 className="text-lg font-medium mb-2">Positions</h3>
+                  {account.positions?.map((position, posIndex) => (
+                    <div
+                      key={posIndex}
+                      className="bg-gray-700 p-3 rounded mb-3 space-y-2"
+                    >
+                      <div>
+                        <label className="block text-sm font-medium text-gray-400">
+                          Position Name
+                        </label>
+                        <input
+                          type="text"
+                          value={position.name}
+                          onChange={(e) =>
+                            updatePosition(
+                              account.username,
+                              posIndex,
+                              'name',
+                              e.target.value
+                            )
+                          }
+                          className="w-full bg-gray-800 rounded px-3 py-1"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-400">
+                          Description
+                        </label>
+                        <input
+                          type="text"
+                          value={position.description}
+                          onChange={(e) =>
+                            updatePosition(
+                              account.username,
+                              posIndex,
+                              'description',
+                              e.target.value
+                            )
+                          }
+                          className="w-full bg-gray-800 rounded px-3 py-1"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-400">
+                          Value
+                        </label>
+                        <input
+                          type="number"
+                          value={position.value}
+                          onChange={(e) =>
+                            updatePosition(
+                              account.username,
+                              posIndex,
+                              'value',
+                              parseFloat(e.target.value)
+                            )
+                          }
+                          className="w-full bg-gray-800 rounded px-3 py-1"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-400">
+                          Allocation (%)
+                        </label>
+                        <input
+                          type="number"
+                          value={position.allocation}
+                          onChange={(e) =>
+                            updatePosition(
+                              account.username,
+                              posIndex,
+                              'allocation',
+                              parseFloat(e.target.value)
+                            )
+                          }
+                          className="w-full bg-gray-800 rounded px-3 py-1"
+                        />
+                      </div>
+                      <div className="flex justify-between mt-4">
+                        <button
+                          onClick={() =>
+                            addPendingTransferNotice(account.username, posIndex)
+                          }
+                          className="bg-yellow-500 hover:bg-yellow-400 text-white px-4 py-2 rounded
