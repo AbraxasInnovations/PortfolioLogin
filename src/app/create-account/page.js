@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 // This would be your list of authorized usernames
 const AUTHORIZED_USERS = {
   'client1': { name: 'John Smith' },
-  'bobbogle24': { name: 'Robert Bogle' }
+  'bobbogle24': { name: 'Robert Bogle' },
   'donhamilton': { name: 'Tyler Hamilton' }
 };
 
