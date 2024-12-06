@@ -19,7 +19,12 @@ export default function Portfolio() {
       return;
     }
 
-    setUserData(JSON.parse(data));
+    try {
+      setUserData(JSON.parse(data));
+    } catch (error) {
+      console.error('Error parsing user data:', error);
+      router.push('/login');
+    }
   }, [router]);
 
   if (!userData) return null;
@@ -33,33 +38,43 @@ export default function Portfolio() {
           <div className="bg-gray-800/50 rounded-lg p-8 mb-8">
             <h2 className="text-xl font-medium mb-4">Portfolio Value</h2>
             <p className="text-4xl font-bold text-green-400">
-              ${userData.portfolioValue.toLocaleString()}
+              ${userData.portfolioValue ? userData.portfolioValue.toLocaleString() : '0'}
             </p>
           </div>
 
           <div className="bg-gray-800/50 rounded-lg p-8">
             <h2 className="text-xl font-medium mb-4">Positions</h2>
-            {userData.positions.length === 0 ? (
-              <p className="text-gray-400">No positions to display</p>
-            ) : (
+            {userData.positions && userData.positions.length > 0 ? (
               <div className="space-y-4">
                 {userData.positions.map((position, index) => (
-                  <div key={index} className="flex justify-between items-center bg-gray-700/50 p-4 rounded-lg">
+                  <div
+                    key={index}
+                    className="flex justify-between items-center bg-gray-700/50 p-4 rounded-lg"
+                  >
                     <div>
                       <h3 className="font-bold">{position.name}</h3>
                       <p className="text-sm text-gray-300">{position.description}</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-bold">${position.value.toLocaleString()}</p>
-                      <p className="text-sm text-gray-300">{position.allocation}% of portfolio</p>
+                      <p className="font-bold">
+                        ${position.value ? position.value.toLocaleString() : '0'}
+                      </p>
+                      <p className="text-sm text-gray-300">
+                        {position.allocation ? position.allocation : '0'}% of portfolio
+                      </p>
+                      {position.pendingTransfer && (
+                        <p className="text-yellow-400 mt-2">Pending Transfer</p>
+                      )}
                     </div>
                   </div>
                 ))}
               </div>
+            ) : (
+              <p className="text-gray-400">No positions to display</p>
             )}
           </div>
 
-          <button 
+          <button
             onClick={() => {
               localStorage.removeItem('currentUser');
               router.push('/login');
