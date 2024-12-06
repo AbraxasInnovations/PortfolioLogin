@@ -25,8 +25,16 @@ export default function Admin() {
 
   const handleAdminLogin = (e) => {
     e.preventDefault();
-    if (adminUsername === ADMIN_CREDENTIALS.username && 
-        adminPassword === ADMIN_CREDENTIALS.password) {
+
+    // Log the entered username and password for debugging
+    console.log('Entered Username:', adminUsername);
+    console.log('Entered Password:', adminPassword);
+
+    // Trim username and ensure case-insensitive match
+    if (
+      adminUsername.trim().toLowerCase() === ADMIN_CREDENTIALS.username.toLowerCase() &&
+      adminPassword === ADMIN_CREDENTIALS.password
+    ) {
       setIsLoggedIn(true);
       setError('');
     } else {
@@ -92,6 +100,7 @@ export default function Admin() {
                     value={adminUsername}
                     onChange={(e) => setAdminUsername(e.target.value)}
                     className="w-full bg-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    placeholder="Enter admin username"
                   />
                 </div>
                 <div>
@@ -101,6 +110,7 @@ export default function Admin() {
                     value={adminPassword}
                     onChange={(e) => setAdminPassword(e.target.value)}
                     className="w-full bg-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    placeholder="Enter admin password"
                   />
                 </div>
                 <button 
