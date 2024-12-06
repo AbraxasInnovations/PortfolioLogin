@@ -260,4 +260,31 @@ export default function Admin() {
                           onClick={() =>
                             addPendingTransferNotice(account.username, posIndex)
                           }
-                          className="bg-yellow-500 hover:bg-yellow-400 text-white px-4 py-2 rounded
+                          className="bg-yellow-500 hover:bg-yellow-400 text-white px-4 py-2 rounded"
+                        >
+                          Add Pending Transfer Notice
+                        </button>
+                        <button
+                          onClick={() => deletePosition(account.username, posIndex)}
+                          className="bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded"
+                        >
+                          Delete Position
+                        </button>
+                      </div>
+                      {position.pendingTransfer && (
+                        <p className="text-yellow-400 mt-2">
+                          Pending Transfer Notice: This position is currently in transfer.
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
