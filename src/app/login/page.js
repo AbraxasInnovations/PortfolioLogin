@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import USER_DATA from "../../data/userData";
+import USER_DATA from "../../../data/userData";
 
 export default function Login() {
   const [username, setUsername] = useState("");
