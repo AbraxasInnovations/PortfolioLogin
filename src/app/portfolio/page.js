@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import USER_DATA from '../../../data/userData'; // Adjust the path as needed
+import USER_DATA from '../../data/userData'; // Adjust the path as needed
 import { Suspense } from 'react';
 
 function PortfolioContent() {
