@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 const AUTHORIZED_USERS = {
   client1: { name: 'John Smith' },
   client2: { name: 'Jane Doe' },
-  client3: { name: 'Jane Bob' },
+  client4: { name: 'Jane Dog' },
   bobj: { name: 'Bob John' },
   bobbogle24: { name: 'Robert Bogle' },
 };
