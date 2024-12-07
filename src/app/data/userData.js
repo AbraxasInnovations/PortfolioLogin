@@ -25,18 +25,26 @@ const USER_DATA = {
     portfolioValue: 30000,
     positions: [
       {
-        name: "Stock C",
-        description: "Energy company shares",
+        name: "Cash",
+        description: "Incoming Deposit to Core Cash Position",
         value: 30000,
         allocation: 100,
         pendingTransfer: true,
       },
     ],
   },
-  client3: {
-    name: "Jane Doe",
-    portfolioValue: 0,
-    positions: [],
+  client4: {
+    name: "Jane Dog",
+    portfolioValue: 1000,
+    positions: [
+      {
+        name: "Cash",
+        description: "Incoming Deposit to Core Cash Position",
+        value: 1000,
+        allocation: 100,
+        pendingTransfer: true,
+      },
+    ],
   },
 };
 
