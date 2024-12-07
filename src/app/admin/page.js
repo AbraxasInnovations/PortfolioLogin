@@ -53,6 +53,13 @@ export default function Admin() {
     setAccounts(allAccounts);
   };
 
+  const updatePortfolioValue = (username, newValue) => {
+    const userData = JSON.parse(localStorage.getItem(username));
+    userData.portfolioValue = parseFloat(newValue);
+    localStorage.setItem(username, JSON.stringify(userData));
+    loadAccounts();
+  };
+
   const updatePosition = (username, positionIndex, field, newValue) => {
     const userData = JSON.parse(localStorage.getItem(username));
     const positions = userData.positions || [];
@@ -159,10 +166,20 @@ export default function Admin() {
           {accounts.map((account, index) => (
             <div key={index} className="bg-gray-800/50 p-6 rounded-lg">
               <h2 className="text-xl font-bold mb-4">Account: {account.username}</h2>
-              <p className="text-gray-400 mb-4">Portfolio Value: ${account.portfolioValue || 0}</p>
+              <div>
+                <label className="block text-sm font-medium text-gray-400">Portfolio Value</label>
+                <input
+                  type="number"
+                  value={account.portfolioValue || 0}
+                  onChange={(e) =>
+                    updatePortfolioValue(account.username, parseFloat(e.target.value))
+                  }
+                  className="w-full bg-gray-700 rounded px-3 py-2"
+                />
+              </div>
               <button
                 onClick={() => addPosition(account.username)}
-                className="bg-green-500 hover:bg-green-400 text-white px-4 py-2 rounded mb-4"
+                className="bg-green-500 hover:bg-green-400 text-white px-4 py-2 rounded my-4"
               >
                 Add Position
               </button>
@@ -197,7 +214,7 @@ export default function Admin() {
                     <label className="block text-sm font-medium text-gray-400">Value</label>
                     <input
                       type="number"
-                      value={position.value}
+                      value={position.value || 0}
                       onChange={(e) =>
                         updatePosition(account.username, posIndex, 'value', parseFloat(e.target.value))
                       }
@@ -208,7 +225,7 @@ export default function Admin() {
                     <label className="block text-sm font-medium text-gray-400">Allocation (%)</label>
                     <input
                       type="number"
-                      value={position.allocation}
+                      value={position.allocation || 0}
                       onChange={(e) =>
                         updatePosition(account.username, posIndex, 'allocation', parseFloat(e.target.value))
                       }
