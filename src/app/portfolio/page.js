@@ -1,19 +1,20 @@
 'use client';
-import React, { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import USER_DATA from "../../data/userData";
+import React, { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import USER_DATA from '../../../data/userData'; // Adjust the path as needed
+import { Suspense } from 'react';
 
-export default function Portfolio() {
+function PortfolioContent() {
   const [userData, setUserData] = useState(null);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const username = searchParams.get("user");
+  const username = searchParams.get('user');
 
   useEffect(() => {
     // Fetch user data from USER_DATA
     const data = USER_DATA[username];
     if (!data) {
-      router.push("/login");
+      router.push('/login');
       return;
     }
     setUserData(data);
@@ -62,5 +63,13 @@ export default function Portfolio() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function Portfolio() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PortfolioContent />
+    </Suspense>
   );
 }
