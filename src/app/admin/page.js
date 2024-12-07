@@ -13,6 +13,7 @@ const AUTHORIZED_USERS = {
   client1: { name: 'John Smith' },
   client2: { name: 'Jane Doe' },
   client3: { name: 'Jane Bob' },
+  bobj: { name: 'Bob John' },
   bobbogle24: { name: 'Robert Bogle' },
 };
 
