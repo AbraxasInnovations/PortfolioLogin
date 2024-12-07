@@ -2,11 +2,12 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-// This would be your list of authorized usernames
+// Pre-defined list of authorized usernames
 const AUTHORIZED_USERS = {
-  'client1': { name: 'John Smith' },
-  'bobbogle24': { name: 'Robert Bogle' },
-  'donhamilton': { name: 'Tyler Hamilton' }
+  client1: { name: 'John Smith' },
+  client2: { name: 'Jane Doe' },
+  client3: { name: 'Jane Bob' },
+  bobbogle24: { name: 'Robert Bogle' },
 };
 
 export default function CreateAccount() {
@@ -18,26 +19,35 @@ export default function CreateAccount() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    // Check if username is authorized
+
+    // Check if the username is authorized
     if (!AUTHORIZED_USERS[username]) {
-      setError('Invalid username');
+      setError('Invalid username. Please use an authorized username.');
       return;
     }
 
     // Check if passwords match
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError('Passwords do not match.');
       return;
     }
 
-    // Save account data
-    localStorage.setItem(username, JSON.stringify({
-      name: AUTHORIZED_USERS[username].name,
-      password,
-      portfolioValue: 0,
-      positions: []
-    }));
+    // Check if the user already exists in localStorage
+    if (localStorage.getItem(username)) {
+      setError('An account for this username already exists.');
+      return;
+    }
+
+    // Save the user's account to localStorage
+    localStorage.setItem(
+      username,
+      JSON.stringify({
+        name: AUTHORIZED_USERS[username]?.name || 'Unknown User',
+        password,
+        portfolioValue: 0,
+        positions: [],
+      })
+    );
 
     router.push('/login');
   };
@@ -82,7 +92,7 @@ export default function CreateAccount() {
                   className="w-full bg-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
               </div>
-              <button 
+              <button
                 type="submit"
                 className="w-full bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 rounded-lg transition-colors"
               >
