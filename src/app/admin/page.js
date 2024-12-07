@@ -8,6 +8,13 @@ const ADMIN_CREDENTIALS = {
   password: 'adminpassword123',
 };
 
+// Pre-defined list of authorized users
+const AUTHORIZED_USERS = {
+  client1: { name: 'John Smith' },
+  client2: { name: 'Jane Doe' },
+  bobbogle24: { name: 'Robert Bogle' },
+};
+
 export default function Admin() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [adminUsername, setAdminUsername] = useState('');
@@ -36,32 +43,36 @@ export default function Admin() {
   };
 
   const loadAccounts = () => {
-    const allAccounts = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key !== 'currentUser') {
-        try {
-          const value = JSON.parse(localStorage.getItem(key));
-          if (value.password) {
-            allAccounts.push({ username: key, ...value });
-          }
-        } catch (e) {
-          // Skip non-JSON entries
-        }
+    const allAccounts = Object.keys(AUTHORIZED_USERS).map((username) => {
+      // Check if the user already exists in localStorage
+      const storedUser = localStorage.getItem(username);
+      if (storedUser) {
+        return { username, ...JSON.parse(storedUser) };
       }
-    }
+      // If not, create a default entry for the authorized user
+      return {
+        username,
+        name: AUTHORIZED_USERS[username]?.name || 'Unknown User',
+        portfolioValue: 0,
+        positions: [],
+      };
+    });
     setAccounts(allAccounts);
   };
 
   const updatePortfolioValue = (username, newValue) => {
-    const userData = JSON.parse(localStorage.getItem(username));
+    const userData = localStorage.getItem(username)
+      ? JSON.parse(localStorage.getItem(username))
+      : { ...AUTHORIZED_USERS[username], portfolioValue: 0, positions: [] };
     userData.portfolioValue = parseFloat(newValue);
     localStorage.setItem(username, JSON.stringify(userData));
     loadAccounts();
   };
 
   const updatePosition = (username, positionIndex, field, newValue) => {
-    const userData = JSON.parse(localStorage.getItem(username));
+    const userData = localStorage.getItem(username)
+      ? JSON.parse(localStorage.getItem(username))
+      : { ...AUTHORIZED_USERS[username], portfolioValue: 0, positions: [] };
     const positions = userData.positions || [];
     positions[positionIndex][field] = newValue;
     userData.positions = positions;
@@ -70,7 +81,9 @@ export default function Admin() {
   };
 
   const addPosition = (username) => {
-    const userData = JSON.parse(localStorage.getItem(username));
+    const userData = localStorage.getItem(username)
+      ? JSON.parse(localStorage.getItem(username))
+      : { ...AUTHORIZED_USERS[username], portfolioValue: 0, positions: [] };
     const newPosition = {
       name: 'New Position',
       description: 'Enter position description',
@@ -83,7 +96,9 @@ export default function Admin() {
   };
 
   const deletePosition = (username, positionIndex) => {
-    const userData = JSON.parse(localStorage.getItem(username));
+    const userData = localStorage.getItem(username)
+      ? JSON.parse(localStorage.getItem(username))
+      : { ...AUTHORIZED_USERS[username], portfolioValue: 0, positions: [] };
     const positions = userData.positions || [];
     positions.splice(positionIndex, 1);
     userData.positions = positions;
@@ -92,7 +107,9 @@ export default function Admin() {
   };
 
   const addPendingTransferNotice = (username, positionIndex) => {
-    const userData = JSON.parse(localStorage.getItem(username));
+    const userData = localStorage.getItem(username)
+      ? JSON.parse(localStorage.getItem(username))
+      : { ...AUTHORIZED_USERS[username], portfolioValue: 0, positions: [] };
     const positions = userData.positions || [];
     if (positions[positionIndex]) {
       positions[positionIndex].pendingTransfer = true;
@@ -103,7 +120,9 @@ export default function Admin() {
   };
 
   const removePendingTransferNotice = (username, positionIndex) => {
-    const userData = JSON.parse(localStorage.getItem(username));
+    const userData = localStorage.getItem(username)
+      ? JSON.parse(localStorage.getItem(username))
+      : { ...AUTHORIZED_USERS[username], portfolioValue: 0, positions: [] };
     const positions = userData.positions || [];
     if (positions[positionIndex]) {
       positions[positionIndex].pendingTransfer = false;
@@ -166,6 +185,7 @@ export default function Admin() {
           {accounts.map((account, index) => (
             <div key={index} className="bg-gray-800/50 p-6 rounded-lg">
               <h2 className="text-xl font-bold mb-4">Account: {account.username}</h2>
+              <p className="text-gray-400 mb-4">Name: {account.name}</p>
               <div>
                 <label className="block text-sm font-medium text-gray-400">Portfolio Value</label>
                 <input
