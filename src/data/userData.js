@@ -26,7 +26,7 @@ const USER_DATA = {
     positions: [
       {
         name: "Cash",
-        description: "Incoming Deposit to Core Cash Position",
+        description: "Incoming Deposit 60% completed",
         value: 30000,
         allocation: 100,
         pendingTransfer: true,
