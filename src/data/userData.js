@@ -27,7 +27,7 @@ const USER_DATA = {
       {
         name: "Hyperliquid Spot Strategy", // New position
         description: "Active strategy in perpetual futures",
-        value: 18750, // New position value
+        value: 18770, // New position value
         allocation: 60, // New allocation percentage
         pendingTransfer: false,
       },
