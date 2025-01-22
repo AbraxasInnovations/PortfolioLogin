@@ -22,18 +22,18 @@ const USER_DATA = {
   },
   bobbogle24: {
     name: "Robert Bogle",
-    portfolioValue: 30870, // Updated total portfolio value
+    portfolioValue: 31140, // Updated total portfolio value
     positions: [
       {
         name: "Hyperliquid Spot Strategy", // New position
         description: "Active strategy in perpetual futures",
-        value: 18870, // New position value
+        value: 19140, // New position value
         allocation: 60, // New allocation percentage
         pendingTransfer: false,
       },
       {
-        name: "Cash",
-        description: "USDC Stable",
+        name: "Geopolitical Portfolio",
+        description: "thematic geopolitical basket",
         value: 12000, // Updated cash value
         allocation: 40, // Updated allocation percentage
         pendingTransfer: true,
